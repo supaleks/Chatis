@@ -1,7 +1,13 @@
+import { useSessionStore } from '@/entities/session/model/session.store'
+import { ChatPage } from '@/pages/chat'
+import { LoginPage } from '@/pages/login'
+
 export function App() {
-	return (
-		<main>
-			<h1>Chatis</h1>
-		</main>
-	)
+	const username = useSessionStore(state => state.username)
+
+	if (!username) {
+		return <LoginPage />
+	}
+
+	return <ChatPage />
 }
