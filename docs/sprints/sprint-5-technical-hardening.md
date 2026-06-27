@@ -1,12 +1,12 @@
-# Sprint 5: Reliability & Technical Hardening
+# Sprint 5: Надежность и техническое укрепление
 
 ## Цель спринта
 
-Закрыть надежность и технические хвосты MVP: reconnect, cleanup legacy history protocol, shared contracts и минимальную test strategy.
+Закрыть надежность и технические хвосты MVP: reconnect, cleanup legacy-протокола истории, shared contracts и минимальную test strategy.
 
-## Выбранные stories
+## Выбранные задачи
 
-| Story | Название | Points |
+| Задача | Название | Оценка |
 | --- | --- | ---: |
 | CH-018 | [Frontend] Обработать reconnect, потерю и восстановление WebSocket connection | 5 |
 | CH-015 | [Техдолг] Убрать history loading из WebSocket protocol | 2 |
@@ -28,7 +28,7 @@
 
 - CH-018 стартует после CH-006, CH-010, CH-019 и CH-020: нужен базовый WS lifecycle, auto-connect, duplicate handling и backend validation.
 - CH-015 стартует после CH-009, CH-013, CH-014 и CH-016: history уже должна жить в REST/TanStack Query, а cache sync не должен зависеть от legacy `get_history`.
-- CH-011 стартует после CH-015, CH-021 и CH-022: shared contracts фиксируются после cleanup целевого protocol surface.
+- CH-011 стартует после CH-015, CH-021 и CH-022: shared contracts фиксируются после cleanup целевой protocol surface.
 - CH-012 стартует после CH-006, CH-008, CH-009 и CH-018: strategy должна покрыть реальные critical paths, а не абстрактные планы.
 
 ## Критерии демо

@@ -2,7 +2,7 @@
   "name": "chatis",
   "version": "0.1.0",
   "private": true,
-  "description": "Production-like messenger application for learning modern frontend architecture and WebSocket development.",
+  "description": "Production-like мессенджер для изучения современной frontend-архитектуры и WebSocket-разработки.",
 	"scripts": {
 		"api:lint:rest": "redocly lint docs/api/openapi.yaml",
 		"api:lint:ws": "node scripts/validate-asyncapi.mjs docs/api/asyncapi.yaml",

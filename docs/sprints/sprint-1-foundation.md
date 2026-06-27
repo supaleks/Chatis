@@ -4,14 +4,14 @@
 
 Настроить процесс разработки через GitHub и подготовить проект к первой пользовательской части мессенджера: стабилизировать frontend quality gates и определить начальный путь входа пользователя.
 
-## Выбранные stories
+## Выбранные задачи
 
-| Story | Название | Points |
+| Задача | Название | Оценка |
 | --- | --- | ---: |
 | CH-001 | [Процесс] Инициализировать GitHub repository и project workflow | 2 |
 | CH-002 | [Техдолг] Исправить frontend build baseline | 1 |
 | CH-003 | [Техдолг] Исправить frontend lint baseline | 1 |
-| CH-004 | [Процесс] Добавить root developer documentation | 2 |
+| CH-004 | [Процесс] Добавить базовую developer documentation в корне проекта | 2 |
 | CH-021 | [Контракт] Зафиксировать Backend API contract для frontend-разработки | 2 |
 | CH-022 | [Инструмент] Добавить validation и generation для API contracts | 3 |
 | CH-005 | [Фича] Авторизация по имени пользователя | 3 |
@@ -22,12 +22,12 @@
 
 ## Риски
 
-- GitHub repository и Project уже созданы, но важно не начинать feature work, пока Sprint 1 quality gates не приведены в зеленое состояние.
+- GitHub repository и Project уже созданы, но важно не начинать feature work, пока quality gates Sprint 1 не приведены в зеленое состояние.
 - Frontend baseline пока не зеленый, поэтому обычный Definition of Done для frontend stories заблокирован.
-- Без Backend API contract frontend-разработчик будет вынужден читать backend source code и угадывать WS/REST behavior.
-- Без contract validation API YAML может начать расходиться с backend/frontend implementation; `CH-021` и `CH-022` должны идти до WS/REST integration stories.
+- Без Backend API contract frontend-разработчик будет вынужден читать код бэкенда и угадывать поведение WS/REST.
+- Без валидации контрактов API YAML может начать расходиться с реализацией бэкенда/фронтенда; `CH-021` и `CH-022` должны идти до WS/REST integration stories.
 - Frontend сейчас слишком маленький, чтобы заранее увидеть все FSD-границы; первые PR должны быть прагматичными и без лишних абстракций.
-- У backend пока нет automated tests, поэтому WebSocket-изменения нужно тщательно проверять вручную до планирования задач на тестирование.
+- У бэкенда пока нет automated tests, поэтому WebSocket-изменения нужно тщательно проверять вручную до планирования задач на тестирование.
 
 ## Заметки по sprint backlog
 
@@ -35,7 +35,7 @@
 - CH-021 нужно закрыть перед CH-005, CH-006, CH-013, CH-020 и всеми frontend integration stories.
 - CH-022 нужно закрыть перед CH-006, CH-013, CH-014 и последующими задачами, которые потребляют API contracts.
 - CH-002 и CH-003 маленькие, но приоритетные: они разблокируют quality gates.
-- CH-004 можно закрывать после CH-021/CH-022, чтобы root docs ссылались на актуальные API docs.
+- CH-004 можно закрывать после CH-021/CH-022, чтобы корневая документация ссылалась на актуальные API docs.
 - CH-005 - первая пользовательская story и зависит от зеленых frontend quality gates и согласованного username contract.
 - CH-005 не должна включать WebSocket messaging.
 
@@ -45,7 +45,7 @@
 
 - GitHub Project/Issues/PR workflow с созданными labels и sprint milestones.
 - Проходящие frontend build и lint.
-- Root documentation с объяснением запуска проекта.
+- Корневая документация с объяснением запуска проекта.
 - Backend API contract для frontend-разработки.
-- Contract validation и REST type generation commands.
-- Username entry screen с переходом в следующее состояние приложения.
+- Валидация контрактов и команды генерации REST-типов.
+- Экран ввода username с переходом в следующее состояние приложения.

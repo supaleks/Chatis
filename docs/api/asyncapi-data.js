@@ -3,7 +3,7 @@ window.CHATIS_ASYNCAPI = {
   "info": {
     "title": "Chatis WebSocket API",
     "version": "0.1.0",
-    "description": "WebSocket contract for Chatis MVP. WebSocket is responsible for realtime events only."
+    "description": "WebSocket contract для MVP Chatis. WebSocket отвечает только за realtime-события."
   },
   "defaultContentType": "application/json",
   "servers": {
@@ -11,7 +11,7 @@ window.CHATIS_ASYNCAPI = {
       "host": "localhost:3001",
       "protocol": "ws",
       "pathname": "/",
-      "description": "Local WebSocket server. The frontend connects with the username query parameter.",
+      "description": "Локальный WebSocket server. Фронтенд подключается с query parameter `username`.",
       "x-connection-example": "ws://localhost:3001?username=alex"
     }
   },
@@ -95,7 +95,7 @@ window.CHATIS_ASYNCAPI = {
           "$ref": "#/channels/chatisSocket/messages/getHistoryLegacy"
         }
       ],
-      "summary": "Legacy history request. Do not use for the target MVP frontend flow."
+      "summary": "Legacy-запрос истории. Не использовать в целевом frontend flow для MVP."
     },
     "receiveChatHistoryLegacy": {
       "action": "receive",
@@ -107,14 +107,14 @@ window.CHATIS_ASYNCAPI = {
           "$ref": "#/channels/chatisSocket/messages/chatHistory"
         }
       ],
-      "summary": "Legacy history response. REST + TanStack Query is the target MVP flow."
+      "summary": "Legacy-ответ с историей. Целевой flow MVP - REST + TanStack Query."
     }
   },
   "components": {
     "messages": {
       "UsersOnline": {
         "name": "users_online",
-        "title": "Online users changed",
+        "title": "Список online users изменился",
         "payload": {
           "type": "object",
           "required": [
@@ -136,7 +136,7 @@ window.CHATIS_ASYNCAPI = {
       },
       "PrivateMessageReceived": {
         "name": "private_message",
-        "title": "Private message received",
+        "title": "Получено личное сообщение",
         "payload": {
           "type": "object",
           "required": [
@@ -155,7 +155,7 @@ window.CHATIS_ASYNCAPI = {
       },
       "PrivateMessageSend": {
         "name": "private_message",
-        "title": "Send private message",
+        "title": "Отправить личное сообщение",
         "payload": {
           "type": "object",
           "required": [
@@ -188,7 +188,7 @@ window.CHATIS_ASYNCAPI = {
       },
       "GetHistoryLegacy": {
         "name": "get_history",
-        "title": "Legacy history request",
+        "title": "Legacy-запрос истории",
         "payload": {
           "type": "object",
           "required": [
@@ -216,7 +216,7 @@ window.CHATIS_ASYNCAPI = {
       },
       "ChatHistory": {
         "name": "chat_history",
-        "title": "Legacy chat history response",
+        "title": "Legacy-ответ с историей чата",
         "payload": {
           "type": "object",
           "required": [
@@ -238,7 +238,7 @@ window.CHATIS_ASYNCAPI = {
       },
       "Error": {
         "name": "error",
-        "title": "Backend error",
+        "title": "Ошибка бэкенда",
         "payload": {
           "type": "object",
           "required": [

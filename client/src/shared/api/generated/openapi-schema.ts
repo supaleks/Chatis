@@ -12,10 +12,10 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Open WebSocket connection
-         * @description WebSocket handshake endpoint for the realtime Chatis protocol.
+         * Открыть WebSocket connection
+         * @description WebSocket handshake endpoint для realtime-протокола Chatis.
          *
-         *     Do not call this operation with `fetch` or Axios. Use the browser WebSocket API:
+         *     Не вызывай эту операцию через `fetch` или Axios. Используй browser WebSocket API:
          *
          *     ```ts
          *     const socket = new WebSocket(
@@ -23,11 +23,11 @@ export interface paths {
          *     )
          *     ```
          *
-         *     Required query parameter:
+         *     Обязательный query parameter:
          *
-         *     - `username` - current MVP username.
+         *     - `username` - текущий username пользователя в MVP.
          *
-         *     Server events to listen for:
+         *     Server events, которые нужно слушать:
          *
          *     ```json
          *     { "type": "users_online", "payload": [{ "username": "alex" }] }
@@ -50,7 +50,7 @@ export interface paths {
          *     { "type": "error", "payload": { "message": "Invalid message format" } }
          *     ```
          *
-         *     Client event for sending a private message:
+         *     Client event для отправки личного сообщения:
          *
          *     ```json
          *     {
@@ -59,9 +59,9 @@ export interface paths {
          *     }
          *     ```
          *
-         *     Legacy history events `get_history` and `chat_history` exist in the current backend, but the MVP frontend should load history through REST + TanStack Query.
+         *     Legacy-события истории `get_history` и `chat_history` есть в текущем бэкенде, но MVP frontend должен загружать историю через REST + TanStack Query.
          *
-         *     Full WebSocket message contract is stored in `docs/api/asyncapi.yaml`.
+         *     Полный WebSocket message contract хранится в `docs/api/asyncapi.yaml`.
          */
         get: operations["openWebSocketConnection"];
         put?: never;
@@ -80,8 +80,8 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Get private conversation history
-         * @description Returns persisted private messages between the current user and selected peer.
+         * Получить историю личной переписки
+         * @description Возвращает сохраненные личные сообщения между текущим пользователем и выбранным собеседником.
          */
         get: operations["getPrivateMessageHistory"];
         put?: never;
@@ -120,7 +120,7 @@ export interface operations {
     openWebSocketConnection: {
         parameters: {
             query: {
-                /** @description Current MVP username used as WebSocket session identity. */
+                /** @description Текущий username пользователя в MVP, используется как идентификатор WebSocket-сессии. */
                 username: string;
             };
             header?: never;
@@ -129,7 +129,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Switching Protocols. The HTTP request is upgraded to a WebSocket connection. */
+            /** @description Switching Protocols. HTTP request переключается в WebSocket connection. */
             101: {
                 headers: {
                     [name: string]: unknown;
@@ -141,9 +141,9 @@ export interface operations {
     getPrivateMessageHistory: {
         parameters: {
             query: {
-                /** @description Current username. */
+                /** @description Текущий username. */
                 user: string;
-                /** @description Peer username for the selected conversation. */
+                /** @description Username собеседника для выбранной conversation. */
                 with: string;
             };
             header?: never;
@@ -152,7 +152,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Conversation history in chronological order. */
+            /** @description История conversation в хронологическом порядке. */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -161,7 +161,7 @@ export interface operations {
                     "application/json": components["schemas"]["ChatMessage"][];
                 };
             };
-            /** @description Required query parameter is missing or invalid. */
+            /** @description Обязательный query parameter отсутствует или некорректен. */
             400: {
                 headers: {
                     [name: string]: unknown;
