@@ -42,6 +42,26 @@ ws://localhost:3001
 
 REST-эндпоинт истории сообщений для MVP пока не реализован. До его появления в бэкенде есть legacy WebSocket-событие `get_history`, но целевая архитектура MVP такая: история через REST + TanStack Query, новые события через WebSocket.
 
+### Статус проверки контракта
+
+Контракт проверен по текущим backend source files:
+
+- `server/src/index.ts` - runtime-поведение WebSocket-сервера;
+- `server/src/types/chat.ts` - TypeScript-типы событий и payload;
+- `server/src/repositories/message.repository.ts` - порядок и формат истории сообщений.
+
+Проверенное поведение:
+
+- WebSocket-сервер слушает `ws://localhost:3001`;
+- `username` читается из query string при подключении;
+- отсутствие `username` возвращает `error` и закрывает socket;
+- `users_online` отправляется всем клиентам после подключения и отключения пользователя;
+- `private_message` сохраняется в SQLite и отправляется отправителю и получателю;
+- legacy `get_history` возвращает `chat_history`;
+- REST endpoint `GET /api/messages/private` пока является целевым контрактом, а не текущей реализацией.
+
+Если backend implementation расходится с этим документом, `docs/api/openapi.yaml` или `docs/api/asyncapi.yaml`, это считается contract drift и должно идти отдельной задачей или bug ticket.
+
 ## Авторизация / подключение пользователя
 
 В MVP нет регистрации, паролей, JWT и server-side accounts.
@@ -64,6 +84,31 @@ const socket = new WebSocket(
   }
 }
 ```
+
+## Quick reference для frontend-разработчика
+
+Минимальный сценарий интеграции для MVP:
+
+1. Получить `username` из frontend session state.
+2. Открыть WebSocket:
+
+```ts
+const socket = new WebSocket(
+  `ws://localhost:3001?username=${encodeURIComponent(username)}`
+)
+```
+
+3. Слушать server events:
+
+- `users_online` - обновить список online users;
+- `private_message` - добавить новое realtime-сообщение в активный диалог или cache;
+- `error` - показать пользователю понятное состояние ошибки;
+- `chat_history` - legacy only, не использовать как целевой источник истории в MVP.
+
+4. Отправлять новое личное сообщение через WebSocket event `private_message`.
+5. Загружать историю диалога через целевой REST endpoint `GET /api/messages/private` после реализации `CH-013`.
+
+Фронтенд не должен читать backend source code для интеграции. Если нужный event или endpoint не описан в этом документе, `docs/api/openapi.yaml` или `docs/api/asyncapi.yaml`, задачу нужно вернуть на refinement.
 
 ## Server events
 
@@ -239,10 +284,19 @@ export type ClientEvent =
 
 ## Известные contract gaps
 
-- Нет REST endpoint истории сообщений.
-- Нет явного HTTP health endpoint.
-- Duplicate usernames сейчас не обработаны безопасно: повторное подключение может перезаписать socket.
-- Бэкенд пока не валидирует empty private message text.
-- `get_history` нужно удалить или явно задепрекейтить после REST migration.
+| Gap | Влияние на frontend | Backlog story |
+| --- | --- | --- |
+| Нет REST endpoint истории сообщений. | Фронтенд пока не может реализовать целевую загрузку истории через TanStack Query. | CH-013 |
+| Duplicate usernames сейчас не обработаны безопасно: повторное подключение может перезаписать socket. | Reconnect и auto-connect могут вести себя неоднозначно. | CH-010 |
+| Бэкенд пока не валидирует empty private message text и неполный payload. | Фронтенд должен валидировать форму, но backend guarantee еще не зафиксирована кодом. | CH-020 |
+| Legacy `get_history` все еще есть в WebSocket protocol. | Фронтенд может случайно использовать нецелевой flow истории. | CH-015 |
+| Shared code-level REST/WS contracts еще не выделены. | Пока источники правды - OpenAPI, AsyncAPI и этот markdown-документ. | CH-011 |
 
-Эти gaps уже покрыты backlog stories: CH-010, CH-013, CH-015, CH-020 и CH-011.
+Что не является blocker для `CH-021`:
+
+- реализация REST endpoint истории;
+- удаление legacy `get_history`;
+- создание shared package;
+- frontend WebSocket integration.
+
+Эти работы остаются в отдельных backlog stories и не входят в scope human-readable backend API contract.
