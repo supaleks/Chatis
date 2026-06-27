@@ -43,7 +43,7 @@
 
 ## Метки
 
-`type:feature`, `type:bug`, `type:tech-debt`, `area:frontend`, `area:backend`, `area:process`, `priority:p0`
+`тип:фича`, `тип:баг`, `тип:техдолг`, `область:фронтенд`, `область:бэкенд`, `область:процесс`, `приоритет:p0`
 
 ## Зависимости
 

@@ -1,4 +1,4 @@
-# Sprint 1: Основа проекта и первый пользовательский срез
+# Спринт 1: Основа проекта и первый пользовательский срез
 
 ## Цель спринта
 
@@ -22,7 +22,7 @@
 
 ## Риски
 
-- GitHub repository и Project уже созданы, но важно не начинать feature work, пока quality gates Sprint 1 не приведены в зеленое состояние.
+- GitHub repository и Project уже созданы, но важно не начинать feature work, пока quality gates Спринта 1 не приведены в зеленое состояние.
 - Frontend baseline пока не зеленый, поэтому обычный Definition of Done для frontend stories заблокирован.
 - Без Backend API contract frontend-разработчик будет вынужден читать код бэкенда и угадывать поведение WS/REST.
 - Без валидации контрактов API YAML может начать расходиться с реализацией бэкенда/фронтенда; `CH-021` и `CH-022` должны идти до WS/REST integration stories.

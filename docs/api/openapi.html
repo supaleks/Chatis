@@ -302,7 +302,7 @@
 				byId('summary').innerHTML = [
 					['Версия', spec.info?.version || '-'],
 					['REST-операции', restOnlyOperations.length],
-					['WS entrypoints', wsEntrypoints.length]
+					['WS-точки входа', wsEntrypoints.length]
 				]
 					.map(
 						([label, value]) =>
@@ -316,17 +316,18 @@
 						.join('')}</div>`
 
 				byId('ws-entrypoints').innerHTML = `<h2>Realtime-протокол</h2>
-					<p class="meta">WebSocket events описаны отдельно, чтобы REST reference оставался компактным.</p>
+					<p class="meta">WebSocket-события описаны отдельно, чтобы REST-справочник оставался компактным.</p>
 					<div class="entrypoint-list">${wsEntrypoints
 						.map(({ method, path, operation }) => `<div class="entrypoint">
 							<span><span class="badge method">${escapeHtml(method)}</span> <code>${escapeHtml(path)}</code> ${escapeHtml(operation.summary || '')}</span>
-							<a href="./asyncapi.html">Открыть WebSocket docs</a>
+							<a href="./asyncapi.html">Открыть WebSocket-доки</a>
 						</div>`)
 						.join('')}</div>`
 
 				byId('operations').innerHTML = restOnlyOperations
 					.map(({ method, path, operation }) => {
 						const status = operation['x-implementation-status'] || 'ready'
+						const statusLabel = status === 'planned' ? 'запланировано' : 'готово'
 						return `<article class="operation">
 							<div class="operation-header">
 								<span class="badge method">${escapeHtml(method)}</span>
@@ -334,13 +335,13 @@
 									<h3>${escapeHtml(operation.summary || operation.operationId || path)}</h3>
 									<p class="meta"><span><b>Путь:</b> <code>${escapeHtml(path)}</code></span></p>
 								</div>
-								<span class="badge ${status === 'planned' ? 'status-planned' : 'status-ready'}">${escapeHtml(status)}</span>
+								<span class="badge ${status === 'planned' ? 'status-planned' : 'status-ready'}">${escapeHtml(statusLabel)}</span>
 							</div>
 							<div class="operation-body">
 								<div>
 									<div class="meta">
 										<span><b>Операция:</b> <code>${escapeHtml(operation.operationId || '-')}</code></span>
-										<span><b>Tags:</b> ${escapeHtml((operation.tags || []).join(', ') || '-')}</span>
+										<span><b>Теги:</b> ${escapeHtml((operation.tags || []).join(', ') || '-')}</span>
 									</div>
 									<div class="description">${renderDescription(operation.description || '')}</div>
 									<h3>Параметры</h3>
