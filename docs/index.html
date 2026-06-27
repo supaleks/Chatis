@@ -1,0 +1,443 @@
+<!doctype html>
+<html lang="ru">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>Chatis Documentation</title>
+		<style>
+			:root {
+				color-scheme: light;
+				--bg: #f7f8fb;
+				--panel: #ffffff;
+				--text: #202632;
+				--muted: #667085;
+				--line: #d9dee8;
+				--rest: #2563eb;
+				--ws: #0f766e;
+				--process: #7c3aed;
+				--contract: #c2410c;
+				--ok: #15803d;
+				--planned: #b45309;
+			}
+
+			* {
+				box-sizing: border-box;
+			}
+
+			body {
+				margin: 0;
+				background: var(--bg);
+				color: var(--text);
+				font: 15px/1.5 Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+			}
+
+			a {
+				color: inherit;
+			}
+
+			.shell {
+				width: min(1180px, calc(100% - 32px));
+				margin: 0 auto;
+				padding: 28px 0 44px;
+			}
+
+			.header {
+				display: flex;
+				align-items: flex-start;
+				justify-content: space-between;
+				gap: 24px;
+				margin-bottom: 22px;
+			}
+
+			h1,
+			h2,
+			h3,
+			p {
+				margin: 0;
+			}
+
+			h1 {
+				font-size: 30px;
+				line-height: 1.15;
+				letter-spacing: 0;
+			}
+
+			.subtitle {
+				max-width: 760px;
+				margin-top: 8px;
+				color: var(--muted);
+			}
+
+			.nav,
+			.links,
+			.chips {
+				display: flex;
+				gap: 8px;
+				flex-wrap: wrap;
+			}
+
+			.nav {
+				justify-content: flex-end;
+			}
+
+			.nav a,
+			.links a,
+			.reading a {
+				min-height: 36px;
+				display: inline-flex;
+				align-items: center;
+				border: 1px solid var(--line);
+				border-radius: 6px;
+				padding: 0 12px;
+				background: var(--panel);
+				text-decoration: none;
+				font-size: 14px;
+			}
+
+			.primary {
+				border-color: transparent !important;
+				background: var(--text) !important;
+				color: #ffffff;
+			}
+
+			.section {
+				margin-top: 18px;
+			}
+
+			.section-title {
+				font-size: 19px;
+				margin-bottom: 10px;
+			}
+
+			.grid {
+				display: grid;
+				grid-template-columns: repeat(2, minmax(0, 1fr));
+				gap: 14px;
+			}
+
+			.grid.three {
+				grid-template-columns: repeat(3, minmax(0, 1fr));
+			}
+
+			.card,
+			.status,
+			.reading {
+				border: 1px solid var(--line);
+				border-radius: 8px;
+				background: var(--panel);
+			}
+
+			.card {
+				min-height: 210px;
+				display: flex;
+				flex-direction: column;
+				justify-content: space-between;
+				gap: 18px;
+				padding: 18px;
+			}
+
+			.card.compact {
+				min-height: 148px;
+			}
+
+			.card h3 {
+				display: flex;
+				align-items: center;
+				gap: 10px;
+				font-size: 18px;
+				line-height: 1.25;
+			}
+
+			.mark {
+				width: 42px;
+				min-width: 42px;
+				height: 38px;
+				display: inline-flex;
+				align-items: center;
+				justify-content: center;
+				border-radius: 8px;
+				color: #ffffff;
+				font-weight: 800;
+				font-size: 12px;
+				letter-spacing: 0;
+			}
+
+			.rest {
+				background: var(--rest);
+			}
+
+			.ws {
+				background: var(--ws);
+			}
+
+			.process {
+				background: var(--process);
+			}
+
+			.contract {
+				background: var(--contract);
+			}
+
+			.card p,
+			.status p,
+			.reading p {
+				color: var(--muted);
+			}
+
+			.status {
+				display: grid;
+				grid-template-columns: repeat(3, minmax(0, 1fr));
+				gap: 0;
+				overflow: hidden;
+			}
+
+			.status-item {
+				padding: 16px;
+				border-right: 1px solid var(--line);
+			}
+
+			.status-item:last-child {
+				border-right: 0;
+			}
+
+			.status-item strong {
+				display: block;
+				margin-bottom: 4px;
+				font-size: 16px;
+			}
+
+			.chip {
+				display: inline-flex;
+				align-items: center;
+				min-height: 28px;
+				border-radius: 999px;
+				padding: 0 10px;
+				color: #ffffff;
+				font-size: 12px;
+				font-weight: 700;
+			}
+
+			.chip.ok {
+				background: var(--ok);
+			}
+
+			.chip.planned {
+				background: var(--planned);
+			}
+
+			.reading {
+				padding: 16px;
+			}
+
+			.reading ol {
+				display: grid;
+				gap: 8px;
+				margin: 12px 0 0;
+				padding-left: 22px;
+			}
+
+			.reading li {
+				padding-left: 4px;
+			}
+
+			code {
+				color: #111827;
+				background: #eef1f6;
+				border-radius: 4px;
+				padding: 2px 5px;
+				font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+			}
+
+			@media (max-width: 900px) {
+				.grid,
+				.grid.three,
+				.status {
+					grid-template-columns: 1fr;
+				}
+
+				.status-item {
+					border-right: 0;
+					border-bottom: 1px solid var(--line);
+				}
+
+				.status-item:last-child {
+					border-bottom: 0;
+				}
+			}
+
+			@media (max-width: 760px) {
+				.header {
+					display: grid;
+				}
+
+				.nav {
+					justify-content: flex-start;
+				}
+			}
+		</style>
+		<link rel="stylesheet" href="./assets/docs.css" />
+	</head>
+	<body>
+		<main class="shell">
+			<nav class="docs-nav" aria-label="Documentation navigation">
+				<strong>Chatis Docs</strong>
+				<div class="docs-links">
+					<a href="./index.html" aria-current="page">Index</a>
+					<a href="./api/openapi.html">REST</a>
+					<a href="./api/asyncapi.html">WebSocket</a>
+				</div>
+			</nav>
+
+			<header class="header">
+				<div>
+					<h1>Chatis Documentation</h1>
+					<p class="subtitle">
+						Единая точка входа в API contracts, product backlog, sprint planning и
+						процесс разработки MVP.
+					</p>
+				</div>
+			</header>
+
+			<section class="section" aria-labelledby="status-title">
+				<h2 class="section-title" id="status-title">Current Status</h2>
+				<div class="status">
+					<div class="status-item">
+						<div class="chips"><span class="chip ok">ready</span></div>
+						<strong>Backend WebSocket</strong>
+						<p>Online users, private messages, SQLite history и legacy history event уже есть.</p>
+					</div>
+					<div class="status-item">
+						<div class="chips"><span class="chip planned">CH-013</span></div>
+						<strong>REST History</strong>
+						<p>Endpoint истории сообщений запланирован для Sprint 3.</p>
+					</div>
+					<div class="status-item">
+						<div class="chips"><span class="chip planned">frontend</span></div>
+						<strong>Product UI</strong>
+						<p>Frontend подготовлен, но messenger функциональность еще не реализована.</p>
+					</div>
+				</div>
+			</section>
+
+			<section class="section" aria-labelledby="api-title">
+				<h2 class="section-title" id="api-title">API Contracts</h2>
+				<div class="grid">
+					<article class="card">
+						<div>
+							<h3><span class="mark rest">REST</span> OpenAPI</h3>
+							<p>
+								История личных сообщений и будущие HTTP endpoints. Используется для
+								TanStack Query и генерации TypeScript-типов.
+						</p>
+					</div>
+					<div class="links">
+							<a class="primary" href="./api/openapi.html">Открыть OpenAPI</a>
+							<a href="./api/openapi.yaml">openapi.yaml</a>
+					</div>
+				</article>
+
+					<article class="card">
+						<div>
+							<h3><span class="mark ws">WS</span> AsyncAPI</h3>
+							<p>
+								WebSocket connection, online users, private messages, ошибки и legacy
+								history events текущего backend.
+							</p>
+						</div>
+						<div class="links">
+							<a class="primary" href="./api/asyncapi.html">Открыть WS docs</a>
+							<a href="./api/asyncapi.yaml">asyncapi.yaml</a>
+						</div>
+					</article>
+				</div>
+			</section>
+
+			<section class="section" aria-labelledby="product-title">
+				<h2 class="section-title" id="product-title">Product & Scrum</h2>
+				<div class="grid three">
+					<article class="card compact">
+						<div>
+							<h3><span class="mark process">PB</span> Product Backlog</h3>
+							<p>Epics, MVP scope, backlog table, sprint plan и GitHub workflow.</p>
+						</div>
+						<div class="links">
+							<a class="primary" href="./viewer.html?doc=product-backlog.md">Открыть</a>
+						</div>
+					</article>
+
+					<article class="card compact">
+						<div>
+							<h3><span class="mark process">SP</span> Sprint Plans</h3>
+							<p>Sprint goals, selected stories, story points, risks и demo criteria.</p>
+						</div>
+						<div class="links">
+							<a href="./viewer.html?doc=sprints%2Fsprint-1-foundation.md">Sprint 1</a>
+							<a href="./viewer.html?doc=sprints%2Fsprint-2-messenger-shell-and-connection.md">Sprint 2</a>
+							<a href="./viewer.html?doc=sprints%2Fsprint-3-rest-history-and-messaging.md">Sprint 3</a>
+							<a href="./viewer.html?doc=sprints%2Fsprint-4-reliability-and-mvp-hardening.md">Sprint 4</a>
+							<a href="./viewer.html?doc=sprints%2Fsprint-5-technical-hardening.md">Sprint 5</a>
+						</div>
+					</article>
+
+					<article class="card compact">
+						<div>
+							<h3><span class="mark process">DoD</span> Process</h3>
+							<p>Definition of Done и issue template для единообразной постановки задач.</p>
+						</div>
+						<div class="links">
+							<a href="./viewer.html?doc=process%2Fdefinition-of-done.md">Definition of Done</a>
+							<a href="./viewer.html?doc=github%2Fissue-template.md">Issue Template</a>
+						</div>
+					</article>
+				</div>
+			</section>
+
+			<section class="section" aria-labelledby="contracts-title">
+				<h2 class="section-title" id="contracts-title">Contracts & Ownership</h2>
+				<div class="grid">
+					<article class="card compact">
+						<div>
+							<h3><span class="mark contract">API</span> Backend Contract</h3>
+							<p>
+								Human-readable ownership, change process, WebSocket events и REST target
+								architecture.
+							</p>
+						</div>
+						<div class="links">
+							<a class="primary" href="./viewer.html?doc=contracts%2Fbackend-api-contract.md">Открыть</a>
+						</div>
+					</article>
+
+					<article class="card compact">
+						<div>
+							<h3><span class="mark contract">SRC</span> Sources of Truth</h3>
+							<p>
+								Machine-readable contracts живут в <code>openapi.yaml</code> и
+								<code>asyncapi.yaml</code>.
+							</p>
+						</div>
+						<div class="links">
+							<a href="./viewer.html?doc=api%2FREADME.md">API README</a>
+							<a href="./api/openapi.yaml">OpenAPI</a>
+							<a href="./api/asyncapi.yaml">AsyncAPI</a>
+						</div>
+					</article>
+				</div>
+			</section>
+
+			<section class="section" aria-labelledby="reading-title">
+				<h2 class="section-title" id="reading-title">Recommended Reading Order</h2>
+				<div class="reading">
+					<p>Для frontend-разработки по Sprint 1 лучше идти в таком порядке:</p>
+					<ol>
+						<li><a href="./viewer.html?doc=product-backlog.md">Product Backlog</a></li>
+						<li><a href="./viewer.html?doc=sprints%2Fsprint-1-foundation.md">Sprint 1 Plan</a></li>
+						<li><a href="./viewer.html?doc=contracts%2Fbackend-api-contract.md">Backend API Contract</a></li>
+						<li><a href="./api/openapi.html">REST OpenAPI</a></li>
+						<li><a href="./api/asyncapi.html">WebSocket AsyncAPI</a></li>
+					</ol>
+				</div>
+			</section>
+		</main>
+	</body>
+</html>
