@@ -1,0 +1,369 @@
+<!doctype html>
+<html lang="ru">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>Chatis REST API</title>
+		<link rel="stylesheet" href="../assets/docs.css" />
+		<style>
+			.method {
+				background: var(--docs-rest);
+			}
+
+			.status-planned {
+				background: var(--docs-planned);
+			}
+
+			.status-ready {
+				background: var(--docs-ok);
+			}
+
+			.description {
+				display: grid;
+				gap: 10px;
+				color: var(--docs-muted);
+			}
+
+			.description p,
+			.description ul,
+			.description pre {
+				margin: 0;
+			}
+
+			.description ul {
+				padding-left: 20px;
+			}
+
+			.response-list {
+				display: grid;
+				gap: 8px;
+			}
+
+			.response-item {
+				display: grid;
+				grid-template-columns: 72px 1fr;
+				gap: 10px;
+				align-items: start;
+				border: 1px solid var(--docs-line);
+				border-radius: 6px;
+				padding: 10px;
+			}
+
+			.response-code {
+				display: inline-flex;
+				align-items: center;
+				justify-content: center;
+				min-height: 28px;
+				border-radius: 999px;
+				background: var(--docs-soft);
+				font-family: var(--docs-mono);
+				font-size: 13px;
+				font-weight: 700;
+			}
+
+			.schema-list {
+				display: grid;
+				gap: 12px;
+			}
+
+			.schema-card {
+				border: 1px solid var(--docs-line);
+				border-radius: var(--docs-radius);
+				background: var(--docs-panel);
+				padding: 16px;
+			}
+
+			.schema-card h3,
+			.operation-body h3 {
+				margin: 12px 0 8px;
+			}
+
+			.entrypoint-list {
+				display: grid;
+				gap: 8px;
+				margin-top: 10px;
+			}
+
+			.entrypoint {
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+				gap: 12px;
+				border: 1px solid var(--docs-line);
+				border-radius: 6px;
+				padding: 10px;
+			}
+
+			.entrypoint a {
+				color: var(--docs-rest);
+				font-weight: 700;
+				text-decoration: none;
+			}
+		</style>
+	</head>
+	<body>
+		<main class="shell">
+			<nav class="docs-nav" aria-label="Documentation navigation">
+				<strong>Chatis Docs</strong>
+				<div class="docs-links">
+					<a href="../index.html">Index</a>
+					<a href="./openapi.html" aria-current="page">REST</a>
+					<a href="./asyncapi.html">WebSocket</a>
+				</div>
+			</nav>
+
+			<header class="header">
+				<div>
+					<h1>Chatis REST API</h1>
+					<p class="subtitle" id="description"></p>
+				</div>
+			</header>
+
+			<section class="summary" id="summary"></section>
+			<section class="connection" id="servers"></section>
+			<section class="connection" id="ws-entrypoints"></section>
+			<h2 class="section-title">REST operations</h2>
+			<section class="operations" id="operations"></section>
+
+			<section class="section" aria-labelledby="schemas-title">
+				<h2 class="section-title" id="schemas-title">Schemas</h2>
+				<div class="schema-list" id="schemas"></div>
+			</section>
+		</main>
+
+		<script src="./openapi-data.js"></script>
+		<script>
+			const spec = window.CHATIS_OPENAPI
+			const byId = (id) => document.getElementById(id)
+
+			const escapeHtml = (value) =>
+				String(value)
+					.replaceAll('&', '&amp;')
+					.replaceAll('<', '&lt;')
+					.replaceAll('>', '&gt;')
+					.replaceAll('"', '&quot;')
+					.replaceAll("'", '&#039;')
+
+			const resolveRef = (value) => {
+				if (!value || typeof value !== 'object' || !value.$ref) {
+					return value
+				}
+
+				return value.$ref
+					.replace(/^#\//, '')
+					.split('/')
+					.reduce((target, segment) => target?.[segment], spec)
+			}
+
+			const schemaType = (schema) => {
+				const resolved = resolveRef(schema)
+				if (!resolved) return 'unknown'
+				if (resolved.const) return `const: ${resolved.const}`
+				if (resolved.format) return `${resolved.type || 'string'}:${resolved.format}`
+				if (resolved.type === 'array') return `array<${schemaType(resolved.items)}>`
+				return resolved.type || 'object'
+			}
+
+			const inlineMarkdown = (value) =>
+				escapeHtml(value)
+					.replace(/`([^`]+)`/g, '<code>$1</code>')
+					.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+
+			const renderDescription = (value = '') => {
+				const lines = String(value).trim().split('\n')
+				const html = []
+				let cursor = 0
+
+				while (cursor < lines.length) {
+					const line = lines[cursor]
+					if (!line.trim()) {
+						cursor += 1
+						continue
+					}
+
+					if (line.startsWith('```')) {
+						const code = []
+						cursor += 1
+						while (cursor < lines.length && !lines[cursor].startsWith('```')) {
+							code.push(lines[cursor])
+							cursor += 1
+						}
+						cursor += 1
+						html.push(`<pre><code>${escapeHtml(code.join('\n'))}</code></pre>`)
+						continue
+					}
+
+					if (/^\s*[-*]\s+/.test(line)) {
+						const items = []
+						while (cursor < lines.length && /^\s*[-*]\s+/.test(lines[cursor])) {
+							items.push(lines[cursor].replace(/^\s*[-*]\s+/, ''))
+							cursor += 1
+						}
+						html.push(`<ul>${items.map((item) => `<li>${inlineMarkdown(item)}</li>`).join('')}</ul>`)
+						continue
+					}
+
+					const paragraph = [line]
+					cursor += 1
+					while (cursor < lines.length && lines[cursor].trim() && !lines[cursor].startsWith('```') && !/^\s*[-*]\s+/.test(lines[cursor])) {
+						paragraph.push(lines[cursor])
+						cursor += 1
+					}
+					html.push(`<p>${inlineMarkdown(paragraph.join(' '))}</p>`)
+				}
+
+				return html.join('')
+			}
+
+			const schemaRows = (schema) => {
+				const resolved = resolveRef(schema)
+				const properties = resolved?.properties || {}
+				const required = new Set(resolved?.required || [])
+
+				if (!Object.keys(properties).length) {
+					return '<p class="empty">Schema fields are not defined.</p>'
+				}
+
+				const rows = Object.entries(properties)
+					.map(([name, property]) => {
+						const resolvedProperty = resolveRef(property)
+						return `<tr>
+							<td><code>${escapeHtml(name)}</code></td>
+							<td>${escapeHtml(schemaType(resolvedProperty))}</td>
+							<td>${required.has(name) ? 'yes' : 'no'}</td>
+						</tr>`
+					})
+					.join('')
+
+				return `<table class="schema">
+					<thead>
+						<tr>
+							<th>Field</th>
+							<th>Type</th>
+							<th>Required</th>
+						</tr>
+					</thead>
+					<tbody>${rows}</tbody>
+				</table>`
+			}
+
+			const operations = () =>
+				Object.entries(spec.paths || {}).flatMap(([path, methods]) =>
+					Object.entries(methods).map(([method, operation]) => ({
+						method,
+						path,
+						operation
+					}))
+				)
+
+			const responseItems = (responses = {}) =>
+				Object.entries(responses)
+					.map(([code, response]) => `<div class="response-item">
+						<span class="response-code">${escapeHtml(code)}</span>
+						<span>${escapeHtml(response.description || 'No description')}</span>
+					</div>`)
+					.join('')
+
+			const parameterTable = (parameters = []) => {
+				if (!parameters.length) {
+					return '<p class="empty">No parameters.</p>'
+				}
+
+				const rows = parameters
+					.map((parameter) => `<tr>
+						<td><code>${escapeHtml(parameter.name)}</code></td>
+						<td>${escapeHtml(parameter.in)}</td>
+						<td>${parameter.required ? 'yes' : 'no'}</td>
+						<td>${escapeHtml(schemaType(parameter.schema))}</td>
+					</tr>`)
+					.join('')
+
+				return `<table class="schema">
+					<thead>
+						<tr>
+							<th>Name</th>
+							<th>In</th>
+							<th>Required</th>
+							<th>Type</th>
+						</tr>
+					</thead>
+					<tbody>${rows}</tbody>
+				</table>`
+			}
+
+			const render = () => {
+				const restOperations = operations()
+				const restOnlyOperations = restOperations.filter(({ path }) => path !== '/')
+				const wsEntrypoints = restOperations.filter(({ path }) => path === '/')
+				const schemas = spec.components?.schemas || {}
+
+				byId('description').textContent = spec.info?.description || ''
+
+				byId('summary').innerHTML = [
+					['Version', spec.info?.version || '-'],
+					['REST operations', restOnlyOperations.length],
+					['WS entrypoints', wsEntrypoints.length]
+				]
+					.map(
+						([label, value]) =>
+							`<article class="stat"><strong>${escapeHtml(value)}</strong><span>${escapeHtml(label)}</span></article>`
+					)
+					.join('')
+
+				byId('servers').innerHTML = `<h2>Servers</h2>
+					<div class="meta">${(spec.servers || [])
+						.map((server) => `<span><b>${escapeHtml(server.url)}</b> ${escapeHtml(server.description || '')}</span>`)
+						.join('')}</div>`
+
+				byId('ws-entrypoints').innerHTML = `<h2>Realtime protocol</h2>
+					<p class="meta">WebSocket events are documented separately to keep REST reference compact.</p>
+					<div class="entrypoint-list">${wsEntrypoints
+						.map(({ method, path, operation }) => `<div class="entrypoint">
+							<span><span class="badge method">${escapeHtml(method)}</span> <code>${escapeHtml(path)}</code> ${escapeHtml(operation.summary || '')}</span>
+							<a href="./asyncapi.html">Open WebSocket docs</a>
+						</div>`)
+						.join('')}</div>`
+
+				byId('operations').innerHTML = restOnlyOperations
+					.map(({ method, path, operation }) => {
+						const status = operation['x-implementation-status'] || 'ready'
+						return `<article class="operation">
+							<div class="operation-header">
+								<span class="badge method">${escapeHtml(method)}</span>
+								<div>
+									<h3>${escapeHtml(operation.summary || operation.operationId || path)}</h3>
+									<p class="meta"><span><b>Path:</b> <code>${escapeHtml(path)}</code></span></p>
+								</div>
+								<span class="badge ${status === 'planned' ? 'status-planned' : 'status-ready'}">${escapeHtml(status)}</span>
+							</div>
+							<div class="operation-body">
+								<div>
+									<div class="meta">
+										<span><b>Operation:</b> <code>${escapeHtml(operation.operationId || '-')}</code></span>
+										<span><b>Tags:</b> ${escapeHtml((operation.tags || []).join(', ') || '-')}</span>
+									</div>
+									<div class="description">${renderDescription(operation.description || '')}</div>
+									<h3>Parameters</h3>
+									${parameterTable(operation.parameters || [])}
+								</div>
+								<div>
+									<div class="meta"><span><b>Responses</b></span></div>
+									<div class="response-list">${responseItems(operation.responses)}</div>
+								</div>
+							</div>
+						</article>`
+					})
+					.join('')
+
+				byId('schemas').innerHTML = Object.entries(schemas)
+					.map(([name, schema]) => `<article class="schema-card">
+						<h3>${escapeHtml(name)}</h3>
+						${schemaRows(schema)}
+					</article>`)
+					.join('')
+			}
+
+			render()
+		</script>
+	</body>
+</html>
