@@ -103,10 +103,10 @@
 	</head>
 	<body>
 		<main class="shell">
-			<nav class="docs-nav" aria-label="Documentation navigation">
+			<nav class="docs-nav" aria-label="Навигация по документации">
 				<strong>Chatis Docs</strong>
 				<div class="docs-links">
-					<a href="../index.html">Index</a>
+					<a href="../index.html">Главная</a>
 					<a href="./openapi.html" aria-current="page">REST</a>
 					<a href="./asyncapi.html">WebSocket</a>
 				</div>
@@ -122,11 +122,11 @@
 			<section class="summary" id="summary"></section>
 			<section class="connection" id="servers"></section>
 			<section class="connection" id="ws-entrypoints"></section>
-			<h2 class="section-title">REST operations</h2>
+			<h2 class="section-title">REST-операции</h2>
 			<section class="operations" id="operations"></section>
 
 			<section class="section" aria-labelledby="schemas-title">
-				<h2 class="section-title" id="schemas-title">Schemas</h2>
+				<h2 class="section-title" id="schemas-title">Схемы</h2>
 				<div class="schema-list" id="schemas"></div>
 			</section>
 		</main>
@@ -157,7 +157,7 @@
 
 			const schemaType = (schema) => {
 				const resolved = resolveRef(schema)
-				if (!resolved) return 'unknown'
+				if (!resolved) return 'неизвестно'
 				if (resolved.const) return `const: ${resolved.const}`
 				if (resolved.format) return `${resolved.type || 'string'}:${resolved.format}`
 				if (resolved.type === 'array') return `array<${schemaType(resolved.items)}>`
@@ -221,7 +221,7 @@
 				const required = new Set(resolved?.required || [])
 
 				if (!Object.keys(properties).length) {
-					return '<p class="empty">Schema fields are not defined.</p>'
+					return '<p class="empty">Поля схемы не определены.</p>'
 				}
 
 				const rows = Object.entries(properties)
@@ -230,7 +230,7 @@
 						return `<tr>
 							<td><code>${escapeHtml(name)}</code></td>
 							<td>${escapeHtml(schemaType(resolvedProperty))}</td>
-							<td>${required.has(name) ? 'yes' : 'no'}</td>
+							<td>${required.has(name) ? 'да' : 'нет'}</td>
 						</tr>`
 					})
 					.join('')
@@ -238,9 +238,9 @@
 				return `<table class="schema">
 					<thead>
 						<tr>
-							<th>Field</th>
-							<th>Type</th>
-							<th>Required</th>
+							<th>Поле</th>
+							<th>Тип</th>
+							<th>Обязательное</th>
 						</tr>
 					</thead>
 					<tbody>${rows}</tbody>
@@ -260,20 +260,20 @@
 				Object.entries(responses)
 					.map(([code, response]) => `<div class="response-item">
 						<span class="response-code">${escapeHtml(code)}</span>
-						<span>${escapeHtml(response.description || 'No description')}</span>
+						<span>${escapeHtml(response.description || 'Нет описания')}</span>
 					</div>`)
 					.join('')
 
 			const parameterTable = (parameters = []) => {
 				if (!parameters.length) {
-					return '<p class="empty">No parameters.</p>'
+					return '<p class="empty">Параметров нет.</p>'
 				}
 
 				const rows = parameters
 					.map((parameter) => `<tr>
 						<td><code>${escapeHtml(parameter.name)}</code></td>
 						<td>${escapeHtml(parameter.in)}</td>
-						<td>${parameter.required ? 'yes' : 'no'}</td>
+						<td>${parameter.required ? 'да' : 'нет'}</td>
 						<td>${escapeHtml(schemaType(parameter.schema))}</td>
 					</tr>`)
 					.join('')
@@ -281,10 +281,10 @@
 				return `<table class="schema">
 					<thead>
 						<tr>
-							<th>Name</th>
-							<th>In</th>
-							<th>Required</th>
-							<th>Type</th>
+							<th>Имя</th>
+							<th>Где</th>
+							<th>Обязательный</th>
+							<th>Тип</th>
 						</tr>
 					</thead>
 					<tbody>${rows}</tbody>
@@ -300,9 +300,9 @@
 				byId('description').textContent = spec.info?.description || ''
 
 				byId('summary').innerHTML = [
-					['Version', spec.info?.version || '-'],
-					['REST operations', restOnlyOperations.length],
-					['WS entrypoints', wsEntrypoints.length]
+					['Версия', spec.info?.version || '-'],
+					['REST-операции', restOnlyOperations.length],
+					['WS-точки входа', wsEntrypoints.length]
 				]
 					.map(
 						([label, value]) =>
@@ -310,44 +310,45 @@
 					)
 					.join('')
 
-				byId('servers').innerHTML = `<h2>Servers</h2>
+				byId('servers').innerHTML = `<h2>Серверы</h2>
 					<div class="meta">${(spec.servers || [])
 						.map((server) => `<span><b>${escapeHtml(server.url)}</b> ${escapeHtml(server.description || '')}</span>`)
 						.join('')}</div>`
 
-				byId('ws-entrypoints').innerHTML = `<h2>Realtime protocol</h2>
-					<p class="meta">WebSocket events are documented separately to keep REST reference compact.</p>
+				byId('ws-entrypoints').innerHTML = `<h2>Realtime-протокол</h2>
+					<p class="meta">WebSocket-события описаны отдельно, чтобы REST-справочник оставался компактным.</p>
 					<div class="entrypoint-list">${wsEntrypoints
 						.map(({ method, path, operation }) => `<div class="entrypoint">
 							<span><span class="badge method">${escapeHtml(method)}</span> <code>${escapeHtml(path)}</code> ${escapeHtml(operation.summary || '')}</span>
-							<a href="./asyncapi.html">Open WebSocket docs</a>
+							<a href="./asyncapi.html">Открыть WebSocket-доки</a>
 						</div>`)
 						.join('')}</div>`
 
 				byId('operations').innerHTML = restOnlyOperations
 					.map(({ method, path, operation }) => {
 						const status = operation['x-implementation-status'] || 'ready'
+						const statusLabel = status === 'planned' ? 'запланировано' : 'готово'
 						return `<article class="operation">
 							<div class="operation-header">
 								<span class="badge method">${escapeHtml(method)}</span>
 								<div>
 									<h3>${escapeHtml(operation.summary || operation.operationId || path)}</h3>
-									<p class="meta"><span><b>Path:</b> <code>${escapeHtml(path)}</code></span></p>
+									<p class="meta"><span><b>Путь:</b> <code>${escapeHtml(path)}</code></span></p>
 								</div>
-								<span class="badge ${status === 'planned' ? 'status-planned' : 'status-ready'}">${escapeHtml(status)}</span>
+								<span class="badge ${status === 'planned' ? 'status-planned' : 'status-ready'}">${escapeHtml(statusLabel)}</span>
 							</div>
 							<div class="operation-body">
 								<div>
 									<div class="meta">
-										<span><b>Operation:</b> <code>${escapeHtml(operation.operationId || '-')}</code></span>
-										<span><b>Tags:</b> ${escapeHtml((operation.tags || []).join(', ') || '-')}</span>
+										<span><b>Операция:</b> <code>${escapeHtml(operation.operationId || '-')}</code></span>
+										<span><b>Теги:</b> ${escapeHtml((operation.tags || []).join(', ') || '-')}</span>
 									</div>
 									<div class="description">${renderDescription(operation.description || '')}</div>
-									<h3>Parameters</h3>
+									<h3>Параметры</h3>
 									${parameterTable(operation.parameters || [])}
 								</div>
 								<div>
-									<div class="meta"><span><b>Responses</b></span></div>
+									<div class="meta"><span><b>Ответы</b></span></div>
 									<div class="response-list">${responseItems(operation.responses)}</div>
 								</div>
 							</div>

@@ -3,7 +3,7 @@ window.CHATIS_OPENAPI = {
   "info": {
     "title": "Chatis API",
     "version": "0.1.0",
-    "description": "REST and WebSocket entrypoint overview for Chatis MVP. REST is responsible for persisted history; WebSocket is responsible for realtime events.",
+    "description": "Обзор REST и WebSocket entrypoint для MVP Chatis. REST отвечает за сохраненную историю сообщений, WebSocket - за realtime-события.",
     "license": {
       "name": "MIT",
       "identifier": "MIT"
@@ -12,18 +12,18 @@ window.CHATIS_OPENAPI = {
   "servers": [
     {
       "url": "http://localhost:3001",
-      "description": "Local development server"
+      "description": "Локальный сервер разработки"
     }
   ],
   "security": [],
   "tags": [
     {
       "name": "websocket",
-      "description": "WebSocket connection and realtime event overview"
+      "description": "WebSocket connection и обзор realtime-событий"
     },
     {
       "name": "messages",
-      "description": "Private message history"
+      "description": "История личных сообщений"
     }
   ],
   "paths": {
@@ -32,8 +32,8 @@ window.CHATIS_OPENAPI = {
         "tags": [
           "websocket"
         ],
-        "summary": "Open WebSocket connection",
-        "description": "WebSocket handshake endpoint for the realtime Chatis protocol.\n\nDo not call this operation with `fetch` or Axios. Use the browser WebSocket API:\n\n```ts\nconst socket = new WebSocket(\n  `ws://localhost:3001?username=${encodeURIComponent(username)}`\n)\n```\n\nRequired query parameter:\n\n- `username` - current MVP username.\n\nServer events to listen for:\n\n```json\n{ \"type\": \"users_online\", \"payload\": [{ \"username\": \"alex\" }] }\n```\n\n```json\n{\n  \"type\": \"private_message\",\n  \"payload\": {\n    \"id\": \"uuid\",\n    \"from\": \"alex\",\n    \"to\": \"maria\",\n    \"text\": \"Привет\",\n    \"createdAt\": \"2026-06-27T10:00:00.000Z\"\n  }\n}\n```\n\n```json\n{ \"type\": \"error\", \"payload\": { \"message\": \"Invalid message format\" } }\n```\n\nClient event for sending a private message:\n\n```json\n{\n  \"type\": \"private_message\",\n  \"payload\": { \"to\": \"maria\", \"text\": \"Привет\" }\n}\n```\n\nLegacy history events `get_history` and `chat_history` exist in the current backend, but the MVP frontend should load history through REST + TanStack Query.\n\nFull WebSocket message contract is stored in `docs/api/asyncapi.yaml`.\n",
+        "summary": "Открыть WebSocket connection",
+        "description": "WebSocket handshake endpoint для realtime-протокола Chatis.\n\nНе вызывай эту операцию через `fetch` или Axios. Используй browser WebSocket API:\n\n```ts\nconst socket = new WebSocket(\n  `ws://localhost:3001?username=${encodeURIComponent(username)}`\n)\n```\n\nОбязательный query parameter:\n\n- `username` - текущий username пользователя в MVP.\n\nServer events, которые нужно слушать:\n\n```json\n{ \"type\": \"users_online\", \"payload\": [{ \"username\": \"alex\" }] }\n```\n\n```json\n{\n  \"type\": \"private_message\",\n  \"payload\": {\n    \"id\": \"uuid\",\n    \"from\": \"alex\",\n    \"to\": \"maria\",\n    \"text\": \"Привет\",\n    \"createdAt\": \"2026-06-27T10:00:00.000Z\"\n  }\n}\n```\n\n```json\n{ \"type\": \"error\", \"payload\": { \"message\": \"Invalid message format\" } }\n```\n\nClient event для отправки личного сообщения:\n\n```json\n{\n  \"type\": \"private_message\",\n  \"payload\": { \"to\": \"maria\", \"text\": \"Привет\" }\n}\n```\n\nLegacy-события истории `get_history` и `chat_history` есть в текущем бэкенде, но MVP frontend должен загружать историю через REST + TanStack Query.\n\nПолный WebSocket message contract хранится в `docs/api/asyncapi.yaml`.\n",
         "operationId": "openWebSocketConnection",
         "x-protocol": "websocket",
         "x-asyncapi-source": "docs/api/asyncapi.yaml",
@@ -42,7 +42,7 @@ window.CHATIS_OPENAPI = {
             "name": "username",
             "in": "query",
             "required": true,
-            "description": "Current MVP username used as WebSocket session identity.",
+            "description": "Текущий username пользователя в MVP, используется как идентификатор WebSocket-сессии.",
             "schema": {
               "type": "string",
               "minLength": 1
@@ -51,7 +51,7 @@ window.CHATIS_OPENAPI = {
         ],
         "responses": {
           "101": {
-            "description": "Switching Protocols. The HTTP request is upgraded to a WebSocket connection."
+            "description": "Switching Protocols. HTTP request переключается в WebSocket connection."
           }
         }
       }
@@ -61,8 +61,8 @@ window.CHATIS_OPENAPI = {
         "tags": [
           "messages"
         ],
-        "summary": "Get private conversation history",
-        "description": "Returns persisted private messages between the current user and selected peer.",
+        "summary": "Получить историю личной переписки",
+        "description": "Возвращает сохраненные личные сообщения между текущим пользователем и выбранным собеседником.",
         "operationId": "getPrivateMessageHistory",
         "x-implementation-status": "planned",
         "parameters": [
@@ -70,7 +70,7 @@ window.CHATIS_OPENAPI = {
             "name": "user",
             "in": "query",
             "required": true,
-            "description": "Current username.",
+            "description": "Текущий username.",
             "schema": {
               "type": "string",
               "minLength": 1
@@ -80,7 +80,7 @@ window.CHATIS_OPENAPI = {
             "name": "with",
             "in": "query",
             "required": true,
-            "description": "Peer username for the selected conversation.",
+            "description": "Username собеседника для выбранной conversation.",
             "schema": {
               "type": "string",
               "minLength": 1
@@ -89,7 +89,7 @@ window.CHATIS_OPENAPI = {
         ],
         "responses": {
           "200": {
-            "description": "Conversation history in chronological order.",
+            "description": "История conversation в хронологическом порядке.",
             "content": {
               "application/json": {
                 "schema": {
@@ -102,7 +102,7 @@ window.CHATIS_OPENAPI = {
             }
           },
           "400": {
-            "description": "Required query parameter is missing or invalid.",
+            "description": "Обязательный query parameter отсутствует или некорректен.",
             "content": {
               "application/json": {
                 "schema": {

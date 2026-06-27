@@ -1,26 +1,26 @@
-# Backend API contract для frontend
+# API-контракт бэкенда для фронтенда
 
-Этот документ фиксирует контракт между backend-разработчиком и frontend-разработчиком. Frontend не должен угадывать WebSocket events или REST endpoints из backend-кода.
+Этот документ фиксирует контракт между бэкенд-разработчиком и фронтенд-разработчиком. Фронтенд не должен угадывать WebSocket-события или REST-эндпоинты из кода бэкенда.
 
 ## Где фиксируем контракт
 
 Контракт фиксируется в трех местах, у каждого места своя роль:
 
-1. `docs/api/openapi.yaml` - machine-readable source of truth для REST.
-2. `docs/api/asyncapi.yaml` - machine-readable source of truth для WebSocket/events.
-3. `docs/contracts/backend-api-contract.md` - human-readable пояснение решений и ownership.
-4. GitHub Issue `CH-021` - задача на согласование и ревью контракта в Sprint 1.
-5. Code-level TypeScript types - будут выделены отдельной задачей `CH-011`, когда появится реальная необходимость шарить типы между frontend и backend кодом.
+1. `docs/api/openapi.yaml` - машиночитаемый источник правды для REST.
+2. `docs/api/asyncapi.yaml` - машиночитаемый источник правды для WebSocket/events.
+3. `docs/contracts/backend-api-contract.md` - человекочитаемое пояснение решений и ownership.
+4. GitHub Issue `CH-021` - задача на согласование и ревью контракта в Спринте 1.
+5. TypeScript-типы на уровне кода - будут выделены отдельной задачей `CH-011`, когда появится реальная необходимость шарить типы между фронтендом и бэкендом.
 
-До закрытия `CH-011` frontend реализует интеграцию по `docs/api/openapi.yaml` и `docs/api/asyncapi.yaml`, а backend implementation обязан им соответствовать. Если backend behavior отличается от спецификаций, это считается bug или contract drift.
+До закрытия `CH-011` фронтенд реализует интеграцию по `docs/api/openapi.yaml` и `docs/api/asyncapi.yaml`, а реализация бэкенда обязана им соответствовать. Если поведение бэкенда отличается от спецификаций, это считается багом или расхождением контракта.
 
-## Ownership и change process
+## Ownership и процесс изменений
 
-На текущем этапе Codex эмулирует backend developer role и отвечает за backend contract.
+На текущем этапе Codex эмулирует роль бэкенд-разработчика и отвечает за контракт бэкенда.
 
 Правила изменения контракта:
 
-- любое изменение WebSocket event или REST endpoint идет через GitHub Issue;
+- любое изменение WebSocket-события или REST-эндпоинта идет через GitHub Issue;
 - breaking change нельзя вносить тихо внутри feature PR;
 - Pull Request с изменением backend API должен обновлять этот документ;
 - frontend-задачи не должны стартовать, если нужный endpoint/event не описан здесь;
@@ -28,25 +28,25 @@
 
 Роли:
 
-- Backend owner: Codex в роли backend developer.
-- Frontend consumer: пользователь в роли frontend developer.
+- Backend owner: Codex в роли бэкенд-разработчика.
+- Frontend consumer: пользователь в роли фронтенд-разработчика.
 - Process owner / reviewer: Codex в роли Engineering Manager и Tech Lead.
 
-## Текущее состояние backend
+## Текущее состояние бэкенда
 
-Backend сейчас поднимает WebSocket server на порту `3001`.
+Бэкенд сейчас поднимает WebSocket-сервер на порту `3001`.
 
 ```txt
 ws://localhost:3001
 ```
 
-REST endpoint истории сообщений для MVP пока не реализован. До его появления в backend есть legacy WebSocket event `get_history`, но целевая архитектура MVP: history через REST + TanStack Query, новые события через WebSocket.
+REST-эндпоинт истории сообщений для MVP пока не реализован. До его появления в бэкенде есть legacy WebSocket-событие `get_history`, но целевая архитектура MVP такая: история через REST + TanStack Query, новые события через WebSocket.
 
 ## Авторизация / подключение пользователя
 
 В MVP нет регистрации, паролей, JWT и server-side accounts.
 
-Пользователь идентифицируется через `username` в query string при открытии WebSocket connection:
+Пользователь идентифицируется через `username` в query string при открытии WebSocket-подключения:
 
 ```ts
 const socket = new WebSocket(
@@ -54,7 +54,7 @@ const socket = new WebSocket(
 )
 ```
 
-Если `username` отсутствует, backend отправляет error event и закрывает соединение:
+Если `username` отсутствует, бэкенд отправляет событие ошибки и закрывает соединение:
 
 ```json
 {
@@ -69,7 +69,7 @@ const socket = new WebSocket(
 
 ### `users_online`
 
-Backend отправляет событие всем подключенным клиентам после подключения или отключения пользователя.
+Бэкенд отправляет событие всем подключенным клиентам после подключения или отключения пользователя.
 
 ```json
 {
@@ -85,11 +85,11 @@ Backend отправляет событие всем подключенным к
 }
 ```
 
-Frontend использует это событие для списка online users.
+Фронтенд использует это событие для списка пользователей онлайн.
 
 ### `private_message`
 
-Backend отправляет событие отправителю и получателю после сохранения сообщения.
+Бэкенд отправляет событие отправителю и получателю после сохранения сообщения.
 
 ```json
 {
@@ -104,11 +104,11 @@ Backend отправляет событие отправителю и получ
 }
 ```
 
-Frontend использует это событие только для новых realtime-сообщений.
+Фронтенд использует это событие только для новых realtime-сообщений.
 
 ### `chat_history`
 
-Legacy event. Сейчас backend может вернуть историю через WebSocket в ответ на `get_history`.
+Legacy-событие. Сейчас бэкенд может вернуть историю через WebSocket в ответ на `get_history`.
 
 ```json
 {
@@ -125,11 +125,11 @@ Legacy event. Сейчас backend может вернуть историю че
 }
 ```
 
-Для MVP frontend не должен строить целевую загрузку истории на этом событии. История должна быть перенесена на REST endpoint.
+Для MVP фронтенд не должен строить целевую загрузку истории на этом событии. История должна быть перенесена на REST-эндпоинт.
 
 ### `error`
 
-Backend отправляет ошибку, если не может обработать событие клиента.
+Бэкенд отправляет ошибку, если не может обработать событие клиента.
 
 ```json
 {
@@ -144,7 +144,7 @@ Backend отправляет ошибку, если не может обрабо
 
 ### `private_message`
 
-Frontend отправляет новое private message через WebSocket.
+Фронтенд отправляет новое личное сообщение через WebSocket.
 
 ```json
 {
@@ -156,16 +156,16 @@ Frontend отправляет новое private message через WebSocket.
 }
 ```
 
-Текущее backend-поведение:
+Текущее поведение бэкенда:
 
-- backend сам проставляет `id`, `from` и `createdAt`;
-- backend сохраняет сообщение в SQLite;
-- backend отправляет сохраненное сообщение отправителю и получателю;
+- бэкенд сам проставляет `id`, `from` и `createdAt`;
+- бэкенд сохраняет сообщение в SQLite;
+- бэкенд отправляет сохраненное сообщение отправителю и получателю;
 - третий пользователь не должен получить это событие.
 
 ### `get_history`
 
-Legacy event.
+Legacy-событие.
 
 ```json
 {
@@ -176,11 +176,11 @@ Legacy event.
 }
 ```
 
-Не использовать как целевое решение для MVP frontend. Эта ответственность должна уйти в REST + TanStack Query.
+Не использовать как целевое решение для MVP-фронтенда. Эта ответственность должна уйти в REST + TanStack Query.
 
 ## Целевой REST contract для истории
 
-Задача backend: CH-013.
+Задача бэкенда: CH-013.
 
 Предлагаемый endpoint:
 
@@ -242,7 +242,7 @@ export type ClientEvent =
 - Нет REST endpoint истории сообщений.
 - Нет явного HTTP health endpoint.
 - Duplicate usernames сейчас не обработаны безопасно: повторное подключение может перезаписать socket.
-- Backend пока не валидирует empty private message text.
+- Бэкенд пока не валидирует empty private message text.
 - `get_history` нужно удалить или явно задепрекейтить после REST migration.
 
 Эти gaps уже покрыты backlog stories: CH-010, CH-013, CH-015, CH-020 и CH-011.

@@ -1,12 +1,12 @@
-# Sprint 3: REST History & Messaging
+# Спринт 3: REST-история и сообщения
 
 ## Цель спринта
 
-Разделить responsibilities транспорта: history загружается через REST и TanStack Query, а WebSocket остается каналом realtime-событий.
+Разделить ответственности транспортов: история загружается через REST и TanStack Query, а WebSocket остается каналом realtime-событий.
 
-## Выбранные stories
+## Выбранные задачи
 
-| Story | Название | Points |
+| Задача | Название | Оценка |
 | --- | --- | ---: |
 | CH-013 | [Backend] Добавить REST endpoint истории private messages | 5 |
 | CH-014 | [Frontend] Подключить TanStack Query baseline | 3 |
@@ -18,20 +18,20 @@
 
 ## Риски
 
-- Backend может потребовать аккуратного объединения HTTP server и WebSocket upgrade.
-- Query key convention нужно определить до реализации history UI.
+- Бэкенд может потребовать аккуратного объединения HTTP server и WebSocket upgrade.
+- Правило query key нужно определить до реализации UI истории.
 - Историю нельзя снова завести через legacy WS event `get_history`.
 
 ## Заметки по зависимостям
 
-- CH-013 стартует после CH-021 и CH-022, потому что endpoint должен соответствовать OpenAPI contract и проходить validation.
-- CH-014 стартует после CH-002, CH-003 и CH-022, чтобы frontend baseline и REST generated types были готовы.
-- CH-009 стартует только после CH-007, CH-013 и CH-014: нужен selected conversation, готовый REST endpoint и TanStack Query baseline.
-- CH-009 не включает WebSocket message sending; это отдельный realtime flow в CH-008.
+- CH-013 стартует после CH-021 и CH-022, потому что endpoint должен соответствовать OpenAPI-контракту и проходить валидацию.
+- CH-014 стартует после CH-002, CH-003 и CH-022, чтобы frontend baseline и сгенерированные REST-типы были готовы.
+- CH-009 стартует только после CH-007, CH-013 и CH-014: нужен выбранный диалог, готовый REST endpoint и TanStack Query baseline.
+- CH-009 не включает отправку сообщений через WebSocket; это отдельный realtime flow в CH-008.
 
 ## Критерии демо
 
-- REST endpoint возвращает историю private conversation из SQLite.
-- Frontend использует TanStack Query для загрузки history.
-- При переключении conversation показывается корректная история.
-- Manual notes подтверждают, что history не грузится через WebSocket.
+- REST endpoint возвращает историю личного диалога из SQLite.
+- Фронтенд использует TanStack Query для загрузки истории.
+- При переключении диалога показывается корректная история.
+- Заметки по ручной проверке подтверждают, что история не грузится через WebSocket.

@@ -1,20 +1,20 @@
-# Chatis API contracts
+# API-контракты Chatis
 
-API contract фиксируется не в markdown, а в machine-readable спецификациях:
+API-контракт фиксируется не в markdown, а в машиночитаемых спецификациях:
 
-- `openapi.yaml` - REST contract для history endpoints.
-- `asyncapi.yaml` - WebSocket contract для realtime events.
+- `openapi.yaml` - REST-контракт для эндпоинтов истории.
+- `asyncapi.yaml` - WebSocket-контракт для realtime-событий.
 
-Markdown-документы могут объяснять решения, но source of truth для API surface - эти YAML-файлы.
+Markdown-документы могут объяснять решения, но источник правды для API-поверхности - эти YAML-файлы.
 
-## Tooling decision
+## Решение по инструментам
 
 - REST: OpenAPI.
 - WebSocket/events: AsyncAPI.
-- REST TypeScript generation: `openapi-typescript`.
-- AsyncAPI validation: `@asyncapi/parser` через локальный script `scripts/validate-asyncapi.mjs`.
+- Генерация REST-типов TypeScript: `openapi-typescript`.
+- Валидация AsyncAPI: `@asyncapi/parser` через локальный скрипт `scripts/validate-asyncapi.mjs`.
 
-## Commands
+## Команды
 
 Команды запускаются из корня проекта:
 
@@ -24,34 +24,34 @@ npm run api:types:rest
 npm run api:docs
 ```
 
-## Current generated artifacts
+## Текущие сгенерированные артефакты
 
-- `client/src/shared/api/generated/openapi-schema.ts` - generated REST types from `docs/api/openapi.yaml`.
-- `docs/index.html` - local documentation entrypoint.
-- `docs/viewer.html` - local markdown viewer for product/process documents.
-- `docs/api/index.html` - local API documentation index.
-- `docs/api/openapi.html` - local OpenAPI documentation page for REST endpoints.
-- `docs/api/openapi-data.js` - generated data file for `openapi.html`.
-- `docs/api/asyncapi.html` - local WebSocket API page for frontend development.
-- `docs/api/asyncapi-data.js` - generated data file for `asyncapi.html`.
+- `client/src/shared/api/generated/openapi-schema.ts` - сгенерированные REST-типы из `docs/api/openapi.yaml`.
+- `docs/index.html` - локальная точка входа в документацию.
+- `docs/viewer.html` - локальный просмотрщик markdown для продуктовых и процессных документов.
+- `docs/api/index.html` - локальный индекс API-документации.
+- `docs/api/openapi.html` - локальная OpenAPI-страница для REST-эндпоинтов.
+- `docs/api/openapi-data.js` - сгенерированный файл данных для `openapi.html`.
+- `docs/api/asyncapi.html` - локальная WebSocket API-страница для frontend-разработки.
+- `docs/api/asyncapi-data.js` - сгенерированный файл данных для `asyncapi.html`.
 
-## Local API pages
+## Локальные API-страницы
 
-- `docs/index.html` - full project documentation entrypoint.
-- `docs/api/index.html` - API documentation entrypoint.
-- `docs/api/openapi.html` - REST/OpenAPI documentation.
-- `docs/api/asyncapi.html` - WebSocket/AsyncAPI documentation.
-- `docs/api/openapi.yaml` - REST contract source.
-- `docs/api/asyncapi.yaml` - WebSocket contract source.
+- `docs/index.html` - общая точка входа в документацию проекта.
+- `docs/api/index.html` - точка входа в API-документацию.
+- `docs/api/openapi.html` - REST/OpenAPI-документация.
+- `docs/api/asyncapi.html` - WebSocket/AsyncAPI-документация.
+- `docs/api/openapi.yaml` - исходник REST-контракта.
+- `docs/api/asyncapi.yaml` - исходник WebSocket-контракта.
 
-## Live contract check
+## Проверка live-контракта
 
-Проверено локально против текущего backend на `ws://localhost:3001`:
+Проверено локально против текущего бэкенда на `ws://localhost:3001`:
 
-- WebSocket connection с `?username=<username>` работает.
+- WebSocket-подключение с `?username=<username>` работает.
 - `users_online` приходит при подключении пользователей.
 - `private_message` доставляется отправителю и получателю.
 - Legacy `get_history` возвращает `chat_history`.
-- REST `GET /api/messages/private` пока не реализован; текущий WS-only server отвечает `426 Upgrade Required`.
+- REST `GET /api/messages/private` пока не реализован; текущий сервер только с WS отвечает `426 Upgrade Required`.
 
-REST history endpoint должен быть реализован в `CH-013`.
+REST-эндпоинт истории должен быть реализован в `CH-013`.

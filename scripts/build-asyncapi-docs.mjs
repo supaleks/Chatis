@@ -14,4 +14,4 @@ await writeFile(
 	'utf8'
 )
 
-console.log('AsyncAPI data generated at docs/api/asyncapi-data.js.')
+console.log('AsyncAPI data generated: docs/api/asyncapi-data.js.')

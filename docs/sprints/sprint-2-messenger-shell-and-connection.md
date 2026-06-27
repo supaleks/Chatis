@@ -1,12 +1,12 @@
-# Sprint 2: Messenger Shell & Connection
+# Спринт 2: Каркас мессенджера и подключение
 
 ## Цель спринта
 
-Собрать первый рабочий messenger shell после входа, подключить WebSocket lifecycle, показать online users и подготовить auto-connect по сохраненному username.
+Собрать первый рабочий каркас мессенджера после входа, подключить WebSocket lifecycle, показать пользователей онлайн и подготовить автоматическое подключение по сохраненному username.
 
-## Выбранные stories
+## Выбранные задачи
 
-| Story | Название | Points |
+| Задача | Название | Оценка |
 | --- | --- | ---: |
 | CH-017 | [Frontend] Собрать desktop-first messenger layout shell | 3 |
 | CH-006 | [Фича] WebSocket lifecycle для realtime-событий | 5 |
@@ -20,20 +20,20 @@
 ## Риски
 
 - WebSocket lifecycle может разрастись, если в него случайно добавить reconnect logic из CH-018.
-- Layout shell должен остаться shell, без преждевременной реализации history и message composer.
-- Auto-connect зависит от аккуратного session ownership, иначе легко получить duplicate sockets.
-- Duplicate username backend handling закрывается позже в CH-010, поэтому Sprint 2 должен ограничиться controlled client cleanup и не обещать полноценную защиту от конкурирующих сессий.
+- Каркас layout должен остаться именно каркасом, без преждевременной реализации истории и composer сообщений.
+- Auto-connect зависит от аккуратного ownership сессии, иначе легко получить duplicate sockets.
+- Обработка duplicate username на бэкенде закрывается позже в CH-010, поэтому Спринт 2 должен ограничиться controlled client cleanup и не обещать полноценную защиту от конкурирующих сессий.
 
 ## Заметки по зависимостям
 
 - CH-017 стартует после CH-005 и не зависит от WebSocket.
-- CH-006 стартует после CH-005, CH-021 и CH-022, чтобы frontend использовал зафиксированный WS contract.
+- CH-006 стартует после CH-005, CH-021 и CH-022, чтобы фронтенд использовал зафиксированный WS-контракт.
 - CH-019 стартует после CH-006, потому что auto-connect должен использовать тот же lifecycle.
 - CH-007 стартует после CH-006 и CH-017: нужен и realtime users event, и место в layout для списка.
 
 ## Критерии демо
 
-- После входа виден desktop-first messenger layout.
-- Приложение показывает состояние WebSocket connection.
-- Две browser sessions видят друг друга в online users.
+- После входа виден desktop-first layout мессенджера.
+- Приложение показывает состояние WebSocket-подключения.
+- Две browser sessions видят друг друга в списке пользователей онлайн.
 - Username восстанавливается после reload и запускает auto-connect.

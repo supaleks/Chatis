@@ -14,4 +14,4 @@ await writeFile(
 	'utf8'
 )
 
-console.log('OpenAPI data generated at docs/api/openapi-data.js.')
+console.log('OpenAPI data generated: docs/api/openapi-data.js.')

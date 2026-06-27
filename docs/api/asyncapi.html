@@ -296,10 +296,10 @@
 	</head>
 	<body>
 		<main class="shell">
-			<nav class="docs-nav" aria-label="Documentation navigation">
+			<nav class="docs-nav" aria-label="Навигация по документации">
 				<strong>Chatis Docs</strong>
 				<div class="docs-links">
-					<a href="../index.html">Index</a>
+					<a href="../index.html">Главная</a>
 					<a href="./openapi.html">REST</a>
 					<a href="./asyncapi.html" aria-current="page">WebSocket</a>
 				</div>
@@ -350,7 +350,7 @@
 
 			const schemaType = (schema) => {
 				const resolved = resolveRef(schema)
-				if (!resolved) return 'unknown'
+				if (!resolved) return 'неизвестно'
 				if (resolved.const) return `const: ${resolved.const}`
 				if (resolved.type === 'array') return `array<${schemaType(resolved.items)}>`
 				return resolved.type || 'object'
@@ -376,7 +376,7 @@
 				if (propertyName === 'text') return 'Привет!'
 				if (propertyName === 'withUser') return 'maria'
 				if (propertyName === 'username') return 'alex'
-				if (propertyName === 'message') return 'Validation error'
+				if (propertyName === 'message') return 'Ошибка валидации'
 				return 'string'
 			}
 
@@ -386,7 +386,7 @@
 				const required = new Set(resolved?.required || [])
 
 				if (!Object.keys(properties).length) {
-					return '<p class="empty">Payload schema is not defined.</p>'
+					return '<p class="empty">Схема payload не определена.</p>'
 				}
 
 				const rows = Object.entries(properties)
@@ -395,7 +395,7 @@
 						return `<tr>
 							<td><code>${escapeHtml(name)}</code></td>
 							<td>${escapeHtml(schemaType(resolvedProperty))}</td>
-							<td>${required.has(name) ? 'yes' : 'no'}</td>
+							<td>${required.has(name) ? 'да' : 'нет'}</td>
 						</tr>`
 					})
 					.join('')
@@ -403,9 +403,9 @@
 				return `<table class="schema">
 					<thead>
 						<tr>
-							<th>Field</th>
-							<th>Type</th>
-							<th>Required</th>
+							<th>Поле</th>
+							<th>Тип</th>
+							<th>Обязательное</th>
 						</tr>
 					</thead>
 					<tbody>${rows}</tbody>
@@ -420,9 +420,9 @@
 				byId('description').textContent = spec.info?.description || ''
 
 				byId('summary').innerHTML = [
-					['Version', spec.info?.version || '-'],
-					['Operations', operations.length],
-					['Channel', channel?.address || '/']
+					['Версия', spec.info?.version || '-'],
+					['Операции', operations.length],
+					['Канал', channel?.address || '/']
 				]
 					.map(
 						([label, value]) =>
@@ -430,8 +430,8 @@
 					)
 					.join('')
 
-				byId('connection').innerHTML = `<h2>Connection</h2>
-					<p>Server: <code>${escapeHtml(server?.protocol || 'ws')}://${escapeHtml(server?.host || 'localhost:3001')}${escapeHtml(server?.pathname || '/')}</code></p>
+				byId('connection').innerHTML = `<h2>Подключение</h2>
+					<p>Сервер: <code>${escapeHtml(server?.protocol || 'ws')}://${escapeHtml(server?.host || 'localhost:3001')}${escapeHtml(server?.pathname || '/')}</code></p>
 					<pre>${escapeHtml(`const socket = new WebSocket('${server?.['x-connection-example'] || 'ws://localhost:3001?username=alex'}')`)}</pre>`
 
 				byId('operations').innerHTML = operations
@@ -454,13 +454,13 @@
 							<div class="operation-body">
 								<div>
 									<div class="meta">
-										<span><b>Operation:</b> <code>${escapeHtml(operationId)}</code></span>
-										<span><b>Summary:</b> ${escapeHtml(operation.summary || 'MVP WebSocket event')}</span>
+										<span><b>Операция:</b> <code>${escapeHtml(operationId)}</code></span>
+										<span><b>Описание:</b> ${escapeHtml(operation.summary || 'MVP WebSocket event')}</span>
 									</div>
 									${schemaRows(payload)}
 								</div>
 								<div>
-									<div class="meta"><span><b>Example payload</b></span></div>
+									<div class="meta"><span><b>Пример payload</b></span></div>
 									<pre>${escapeHtml(example)}</pre>
 								</div>
 							</div>

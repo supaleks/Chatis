@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<title>Chatis Docs Viewer</title>
+		<title>Просмотр документации Chatis</title>
 		<style>
 			:root {
 				color-scheme: light;
@@ -194,16 +194,16 @@
 	</head>
 	<body>
 		<main class="shell">
-			<nav class="docs-nav" aria-label="Documentation navigation">
+			<nav class="docs-nav" aria-label="Навигация по документации">
 				<strong>Chatis Docs</strong>
 				<div class="docs-links">
-					<a href="./index.html">Index</a>
+					<a href="./index.html">Главная</a>
 					<a href="./api/openapi.html">REST</a>
 					<a href="./api/asyncapi.html">WebSocket</a>
 				</div>
 			</nav>
 			<article class="document" id="document">
-				<p>Loading...</p>
+				<p>Загрузка...</p>
 			</article>
 		</main>
 
@@ -371,19 +371,19 @@
 
 			const loadDocument = async () => {
 				if (!isAllowedPath(docPath)) {
-					container.innerHTML = '<p class="error">Document path is not allowed.</p>'
+					container.innerHTML = '<p class="error">Путь к документу не разрешен.</p>'
 					return
 				}
 
 				const response = await fetch(docPath)
 				if (!response.ok) {
-					container.innerHTML = '<p class="error">Document was not found.</p>'
+					container.innerHTML = '<p class="error">Документ не найден.</p>'
 					return
 				}
 
 				const source = await response.text()
 				container.innerHTML = renderMarkdown(source)
-				document.title = `${container.querySelector('h1')?.textContent || 'Chatis Docs'}`
+				document.title = `${container.querySelector('h1')?.textContent || 'Документация Chatis'}`
 			}
 
 			loadDocument().catch((error) => {
