@@ -1,4 +1,10 @@
-import { useSessionStore } from '@/entities/session/model/session.store'
+import {
+	getConnectionStatusView,
+	useConnectionStore
+} from '@/entities/connection'
+import { useOnlineUsersStore } from '@/entities/online-users'
+import { useSessionStore } from '@/entities/session'
+import { useWebSocket } from '@/shared/hooks/use-websocket'
 import { AppSurface } from '@/shared/ui/app-surface'
 import { BrandMark } from '@/shared/ui/brand-mark'
 import { Button } from '@/shared/ui/button'
@@ -8,6 +14,10 @@ import { LogOut, MessageSquareText, UsersRound } from 'lucide-react'
 export const ChatPage = () => {
 	const username = useSessionStore(state => state.username)
 	const logout = useSessionStore(state => state.logout)
+	useWebSocket()
+	const status = useConnectionStore(state => state.status)
+	const connectionView = getConnectionStatusView(status)
+	const users = useOnlineUsersStore(state => state.onlineUsers)
 
 	return (
 		<main className="min-h-screen p-4 md:p-6">
@@ -30,10 +40,10 @@ export const ChatPage = () => {
 
 					<div className="mt-6 space-y-3">
 						<StatusBadge
-							variant="online"
+							variant={connectionView.variant}
 							className="border-white/15 bg-white/10 text-sidebar-foreground"
 						>
-							{username ?? 'online'}
+							{connectionView.label}
 						</StatusBadge>
 
 						<div className="rounded-lg border border-white/10 bg-white/7 p-3">
@@ -44,9 +54,26 @@ export const ChatPage = () => {
 								/>
 								Онлайн
 							</div>
-							<p className="mt-2 text-sm text-sidebar-foreground/65">
-								Список пользователей появится после подключения WebSocket.
-							</p>
+
+							{users.length > 0 ? (
+								<ul className="mt-3 space-y-2">
+									{users.map(user => (
+										<li
+											key={user.username}
+											className="flex min-h-8 items-center justify-between rounded-md bg-white/7 px-2 text-sm"
+										>
+											<span>{user.username}</span>
+											{user.username === username && (
+												<span className="text-xs text-sidebar-foreground/55">Вы</span>
+											)}
+										</li>
+									))}
+								</ul>
+							) : (
+								<p className="mt-2 text-sm text-sidebar-foreground/65">
+									Список пользователей появится после подключения WebSocket.
+								</p>
+							)}
 						</div>
 					</div>
 				</aside>
