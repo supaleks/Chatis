@@ -1,9 +1,11 @@
 {
-  "name": "chatis",
-  "version": "0.1.0",
-  "private": true,
-  "description": "Мессенджер, приближенный к коммерческой разработке, для изучения современной frontend-архитектуры и WebSocket-разработки.",
+	"name": "chatis",
+	"version": "0.1.0",
+	"private": true,
+	"description": "Мессенджер, приближенный к коммерческой разработке, для изучения современной frontend-архитектуры и WebSocket-разработки.",
 	"scripts": {
+		"render:build": "npm ci --prefix client && npm run build --prefix client && npm ci --prefix server && npm run build --prefix server",
+		"render:start": "npm run start --prefix server",
 		"api:lint:rest": "redocly lint docs/api/openapi.yaml",
 		"api:lint:ws": "node scripts/validate-asyncapi.mjs docs/api/asyncapi.yaml",
 		"api:lint": "npm run api:lint:rest && npm run api:lint:ws",
@@ -12,10 +14,10 @@
 		"api:docs": "npm run api:docs:rest && npm run api:docs:ws",
 		"api:types:rest": "openapi-typescript docs/api/openapi.yaml -o client/src/shared/api/generated/openapi-schema.ts"
 	},
-  "devDependencies": {
-    "@asyncapi/parser": "^3.6.0",
-    "@redocly/cli": "^2.35.1",
-    "js-yaml": "^4.3.0",
-    "openapi-typescript": "^7.13.0"
-  }
+	"devDependencies": {
+		"@asyncapi/parser": "^3.6.0",
+		"@redocly/cli": "^2.35.1",
+		"js-yaml": "^4.3.0",
+		"openapi-typescript": "^7.13.0"
+	}
 }

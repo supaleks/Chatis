@@ -65,6 +65,31 @@ npm run dev
 - WebSocket-сервер доступен на `ws://localhost:3001`;
 - имя пользователя передается при подключении как `ws://localhost:3001?username=<username>`.
 
+## Production-like запуск
+
+Для demo deploy используется один Node.js-процесс: сервер отдаёт собранный frontend, healthcheck и WebSocket на одном публичном домене.
+
+Собрать проект:
+
+```bash
+npm run render:build
+```
+
+Запустить production-сервер:
+
+```bash
+npm run render:start
+```
+
+Переменные окружения:
+
+- `PORT` - порт HTTP/WebSocket-сервера;
+- `DB_PATH` - путь к SQLite-файлу;
+- `CLIENT_DIST_PATH` - путь к собранному frontend, если нужно переопределить значение по умолчанию;
+- `VITE_WS_URL` - явный WebSocket URL для frontend build, если same-origin подключение не подходит.
+
+Render Blueprint описан в `render.yaml`.
+
 ## API и контракты
 
 Фронтенд не должен угадывать API из кода бэкенда. Источники правды:

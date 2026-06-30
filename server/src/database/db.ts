@@ -1,6 +1,12 @@
 import Database from 'better-sqlite3'
+import { mkdirSync } from 'node:fs'
+import { dirname } from 'node:path'
 
-export const db = new Database('chatis.db')
+const DB_PATH = process.env.DB_PATH ?? 'chatis.db'
+
+mkdirSync(dirname(DB_PATH), { recursive: true })
+
+export const db = new Database(DB_PATH)
 
 db.exec(`
   CREATE TABLE IF NOT EXISTS messages (

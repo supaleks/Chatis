@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: chatis
+    runtime: node
+    plan: free
+    repo: https://github.com/supaleks/Chatis
+    branch: master
+    autoDeploy: true
+    buildCommand: npm run render:build
+    startCommand: npm run render:start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: 24.11.1
+      - key: DB_PATH
+        value: ./chatis.db
