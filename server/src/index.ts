@@ -1,22 +1,29 @@
+import { createReadStream, existsSync, statSync } from 'node:fs'
+import { createServer, type IncomingMessage, type ServerResponse } from 'node:http'
+import { extname, isAbsolute, join, relative, resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { WebSocket, WebSocketServer, type RawData } from 'ws'
 import {
 	getPrivateHistory,
 	saveMessage
 } from './repositories/message.repository.js'
-import type {
-	ChatMessage,
-	ClientEvent,
-	ServerEvent,
-	User
-} from './types/chat.js'
+import type { ChatMessage, ClientEvent, ServerEvent } from './types/chat.js'
 
-const PORT = 3001
+const PORT = Number(process.env.PORT ?? 3001)
+const __dirname = fileURLToPath(new URL('.', import.meta.url))
+const CLIENT_DIST_PATH =
+	process.env.CLIENT_DIST_PATH ?? resolve(__dirname, '../../client/dist')
 
-const wss = new WebSocketServer({
-	port: PORT
-})
-
+const wss = new WebSocketServer({ noServer: true })
 const clients = new Map<string, WebSocket>()
+const contentTypes: Record<string, string> = {
+	'.css': 'text/css; charset=utf-8',
+	'.html': 'text/html; charset=utf-8',
+	'.js': 'text/javascript; charset=utf-8',
+	'.json': 'application/json; charset=utf-8',
+	'.svg': 'image/svg+xml',
+	'.woff2': 'font/woff2'
+}
 
 function send(socket: WebSocket, event: ServerEvent) {
 	if (socket.readyState !== WebSocket.OPEN) {
@@ -27,9 +34,7 @@ function send(socket: WebSocket, event: ServerEvent) {
 }
 
 function broadcastOnlineUsers() {
-	const users: User[] = Array.from(clients.keys()).map(username => ({
-		username
-	}))
+	const users = Array.from(clients.keys())
 
 	const event: ServerEvent = {
 		type: 'users_online',
@@ -41,6 +46,48 @@ function broadcastOnlineUsers() {
 	})
 }
 
+function getRequestUrl(request: IncomingMessage) {
+	return new URL(
+		request.url ?? '/',
+		`http://${request.headers.host ?? `localhost:${PORT}`}`
+	)
+}
+
+function sendJson(response: ServerResponse, statusCode: number, body: unknown) {
+	response.writeHead(statusCode, {
+		'Content-Type': 'application/json; charset=utf-8'
+	})
+	response.end(JSON.stringify(body))
+}
+
+function serveStatic(request: IncomingMessage, response: ServerResponse) {
+	const url = getRequestUrl(request)
+	const pathname = decodeURIComponent(url.pathname)
+	const requestedPath = pathname === '/' ? '/index.html' : pathname
+	const filePath = resolve(CLIENT_DIST_PATH, `.${requestedPath}`)
+	const indexPath = join(CLIENT_DIST_PATH, 'index.html')
+	const relativePath = relative(CLIENT_DIST_PATH, filePath)
+
+	if (relativePath.startsWith('..') || isAbsolute(relativePath)) {
+		sendJson(response, 403, { status: 'forbidden' })
+		return
+	}
+
+	const targetPath =
+		existsSync(filePath) && statSync(filePath).isFile() ? filePath : indexPath
+
+	if (!existsSync(targetPath)) {
+		sendJson(response, 404, { status: 'not_found' })
+		return
+	}
+
+	response.writeHead(200, {
+		'Content-Type':
+			contentTypes[extname(targetPath)] ?? 'application/octet-stream'
+	})
+	createReadStream(targetPath).pipe(response)
+}
+
 function parseClientEvent(data: RawData): ClientEvent | null {
 	try {
 		return JSON.parse(data.toString()) as ClientEvent
@@ -50,7 +97,7 @@ function parseClientEvent(data: RawData): ClientEvent | null {
 }
 
 wss.on('connection', (socket, request) => {
-	const url = new URL(request.url ?? '', `http://localhost:${PORT}`)
+	const url = getRequestUrl(request)
 	const username = url.searchParams.get('username')
 
 	if (!username) {
@@ -122,8 +169,6 @@ wss.on('connection', (socket, request) => {
 				type: 'chat_history',
 				payload: history
 			})
-
-			return
 		}
 	})
 
@@ -134,4 +179,28 @@ wss.on('connection', (socket, request) => {
 	})
 })
 
-console.log(`Chatis server started on ws://localhost:${PORT} 🚀`)
+const server = createServer((request, response) => {
+	const url = getRequestUrl(request)
+
+	if (request.method === 'GET' && url.pathname === '/api/health') {
+		sendJson(response, 200, { status: 'ok' })
+		return
+	}
+
+	if (request.method !== 'GET') {
+		sendJson(response, 405, { status: 'method_not_allowed' })
+		return
+	}
+
+	serveStatic(request, response)
+})
+
+server.on('upgrade', (request, socket, head) => {
+	wss.handleUpgrade(request, socket, head, ws => {
+		wss.emit('connection', ws, request)
+	})
+})
+
+server.listen(PORT, () => {
+	console.log(`Chatis server started on http://localhost:${PORT}`)
+})

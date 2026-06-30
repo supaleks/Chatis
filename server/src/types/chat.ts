@@ -13,7 +13,7 @@ export type ChatMessage = {
 export type ServerEvent =
 	| {
 			type: 'users_online'
-			payload: User[]
+			payload: string[]
 	  }
 	| {
 			type: 'private_message'
