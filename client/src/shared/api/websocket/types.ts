@@ -1,8 +1,6 @@
-import type { OnlineUser } from '@/entities/online-users'
-
 export type UsersOnlineMessage = {
 	type: 'users_online'
-	payload: OnlineUser[]
+	payload: string[]
 }
 
 export type PrivateMessageMessage = {

@@ -21,8 +21,12 @@ export const useWebSocket = () => {
 			onError: () => setError('Ошибка соединения с сервером')
 		})
 		const unsubscribe = websocketClient.subscribe(message => {
-			if (message.type === 'users_online') {
-				updateOnlineUsers(message.payload)
+			if (message.type === 'users_online' && Array.isArray(message.payload)) {
+				updateOnlineUsers(
+					message.payload
+						.filter(username => typeof username === 'string')
+						.map(username => ({ username }))
+				)
 			}
 		})
 		return () => {
