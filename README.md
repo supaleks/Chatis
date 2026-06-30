@@ -92,6 +92,8 @@ npm run render:start
 
 Render Blueprint описан в `render.yaml`.
 
+Demo окружение на Render обновляется из ветки `master`.
+
 ## API и контракты
 
 Фронтенд не должен угадывать API из кода бэкенда. Источники правды:
