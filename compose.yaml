@@ -1,0 +1,28 @@
+services:
+  chatis:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 3001
+      DB_PATH: /data/chatis.db
+      CLIENT_DIST_PATH: /app/client/dist
+    ports:
+      - "${APP_PORT:-3001}:3001"
+    volumes:
+      - chatis-data:/data
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "node -e \"fetch('http://127.0.0.1:3001/api/health').then(response => process.exit(response.ok ? 0 : 1)).catch(() => process.exit(1))\""
+        ]
+      interval: 30s
+      timeout: 5s
+      start_period: 10s
+      retries: 5
+
+volumes:
+  chatis-data:
