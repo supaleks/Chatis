@@ -94,6 +94,32 @@ Render Blueprint описан в `render.yaml`.
 
 Demo окружение на Render обновляется из ветки `master`.
 
+## Docker и Coolify
+
+Для домашнего сервера и Coolify используется production Docker-образ из корня репозитория.
+
+Локальный запуск через Docker Compose:
+
+```bash
+docker compose up --build
+```
+
+После запуска приложение доступно на `http://localhost:3001`.
+
+Для Coolify:
+
+- создать новый ресурс из GitHub repository `supaleks/Chatis`;
+- выбрать build pack `Dockerfile`;
+- указать exposed port `3001`;
+- добавить persistent storage `/data`;
+- оставить переменные окружения по умолчанию или задать явно:
+  - `NODE_ENV=production`;
+  - `PORT=3001`;
+  - `DB_PATH=/data/chatis.db`;
+  - `CLIENT_DIST_PATH=/app/client/dist`.
+
+SQLite-файл хранится в `/data/chatis.db`, поэтому история сообщений переживает пересоздание контейнера.
+
 ## API и контракты
 
 Фронтенд не должен угадывать API из кода бэкенда. Источники правды:
